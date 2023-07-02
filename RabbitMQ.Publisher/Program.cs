@@ -10,7 +10,11 @@ using IConnection connection = factory.CreateConnection();
 using IModel channel = connection.CreateModel();
 
 // Queue oluşturuyoruz. Eğer bir kuyruk exclusive olarak tasarlanıyorsa, o kuyruk o bağlantıya özel oluşturulur, daha sonra da silinir.
-channel.QueueDeclare(queue: "example-queue", exclusive: false);
+channel.QueueDeclare(queue: "example-queue", exclusive: false, durable: true);
+
+IBasicProperties properties = channel.CreateBasicProperties();
+properties.Persistent = true;
+
 
 // Queue'ya mesaj gönderiyoruz.RabbitMQ kuyruğa atacağı mesajları byte türünden kabul etmektedir.Mesajları byte'a dönüştürmemiz gerekiyor.
 //byte[] message = Encoding.UTF8.GetBytes("Hello");
@@ -19,8 +23,9 @@ channel.QueueDeclare(queue: "example-queue", exclusive: false);
 
 for (int i = 0; i < 100; i++)
 {
+    await Task.Delay(200);
     byte[] message = Encoding.UTF8.GetBytes("Hello " + i);
-    channel.BasicPublish(exchange: "", routingKey: "example-queue", body: message);
+    channel.BasicPublish(exchange: "", routingKey: "example-queue", body: message, basicProperties: properties);
 }
 
 Console.Read();
