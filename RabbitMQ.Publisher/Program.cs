@@ -9,23 +9,20 @@ factory.Uri = new("amqps://gagxjjis:g1rs6slF9bx-4tKOXHlP-NVypI8LlG8u@toad.rmq.cl
 using IConnection connection = factory.CreateConnection();
 using IModel channel = connection.CreateModel();
 
-// Queue oluşturuyoruz. Eğer bir kuyruk exclusive olarak tasarlanıyorsa, o kuyruk o bağlantıya özel oluşturulur, daha sonra da silinir.
-channel.QueueDeclare(queue: "example-queue", exclusive: false, durable: true);
-
-IBasicProperties properties = channel.CreateBasicProperties();
-properties.Persistent = true;
+channel.ExchangeDeclare("direct-exchange-example", type: ExchangeType.Direct);
 
 
-// Queue'ya mesaj gönderiyoruz.RabbitMQ kuyruğa atacağı mesajları byte türünden kabul etmektedir.Mesajları byte'a dönüştürmemiz gerekiyor.
-//byte[] message = Encoding.UTF8.GetBytes("Hello");
-//// Exchange boş geçildiği takdirde default olarak DIRECT EXCHANGE kabul edilir.Direct Exchange'te routing key mesaj kuyruğunun ismine karşılık gelir.Yani "example-queue"
-//channel.BasicPublish(exchange: "", routingKey: "example-queue", body: message);
 
-for (int i = 0; i < 100; i++)
+while (true)
 {
-    await Task.Delay(200);
-    byte[] message = Encoding.UTF8.GetBytes("Hello " + i);
-    channel.BasicPublish(exchange: "", routingKey: "example-queue", body: message, basicProperties: properties);
+    Console.Write("Message : ");
+    string message = Console.ReadLine();
+    byte[] byteMessage = Encoding.UTF8.GetBytes(message);
+
+    channel.BasicPublish(
+        exchange: "direct-exchange-example",
+        routingKey: "direct-queue-example",
+        body: byteMessage);
 }
 
 Console.Read();
