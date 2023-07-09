@@ -8,32 +8,19 @@ factory.Uri = new("amqps://gagxjjis:g1rs6slF9bx-4tKOXHlP-NVypI8LlG8u@toad.rmq.cl
 using IConnection connection = factory.CreateConnection();
 using IModel channel = connection.CreateModel();
 
-channel.ExchangeDeclare(
-    exchange: "header-exchange-example",
-    type: ExchangeType.Headers
-    );
+//string queueName = "p2p-queue-example";
 
-for (int i = 0; i < 100; i++)
-{
-    await Task.Delay(200);
-    byte[] message = Encoding.UTF8.GetBytes($" Hello {i}"); 
-    Console.WriteLine("Please set header value: ");
-    string value = Console.ReadLine();
+//channel.QueueDeclare(
+//    queue: queueName,
+//    durable: false,
+//    exclusive: false,
+//    autoDelete: false);
 
-    IBasicProperties basicProperties = channel.CreateBasicProperties();
-    basicProperties.Headers = new Dictionary<string, object>()
-    {
-        ["no"] = value
-    };
+//byte[] message = Encoding.UTF8.GetBytes("Hello");
 
-
-    //basicProperties amacı, publish sürecinde "header-exchange-example" 'ın headerına bir değer vermek için kullanıyoruz.
-    channel.BasicPublish(
-        exchange: "header-exchange-example",
-        routingKey: string.Empty,
-        body: message,
-        basicProperties: basicProperties
-        );
-}
+//channel.BasicPublish(
+//        exchange: string.Empty,
+//        routingKey: queueName,
+//        body: message);
 
 Console.Read();
