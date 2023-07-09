@@ -9,20 +9,18 @@ factory.Uri = new("amqps://gagxjjis:g1rs6slF9bx-4tKOXHlP-NVypI8LlG8u@toad.rmq.cl
 using IConnection connection = factory.CreateConnection();
 using IModel channel = connection.CreateModel();
 
-channel.ExchangeDeclare("direct-exchange-example", type: ExchangeType.Direct);
+channel.ExchangeDeclare(exchange: "fanout-exchange-example", type: ExchangeType.Fanout);
 
-
-
-while (true)
+for (int i = 0; i < 100; i++)
 {
-    Console.Write("Message : ");
-    string message = Console.ReadLine();
-    byte[] byteMessage = Encoding.UTF8.GetBytes(message);
+    await Task.Delay(200);
+    //$"{}" > string interpolation
+    byte[] message = Encoding.UTF8.GetBytes($" Hello {i}");
 
     channel.BasicPublish(
-        exchange: "direct-exchange-example",
-        routingKey: "direct-queue-example",
-        body: byteMessage);
+        exchange: "fanout-exchange-example",
+        routingKey: string.Empty,
+        body: message);
 }
 
 Console.Read();
