@@ -8,19 +8,23 @@ factory.Uri = new("amqps://gagxjjis:g1rs6slF9bx-4tKOXHlP-NVypI8LlG8u@toad.rmq.cl
 using IConnection connection = factory.CreateConnection();
 using IModel channel = connection.CreateModel();
 
-//string queueName = "p2p-queue-example";
+string exchangeName = "pub-sub-exchange-exam";
 
-//channel.QueueDeclare(
-//    queue: queueName,
-//    durable: false,
-//    exclusive: false,
-//    autoDelete: false);
+channel.ExchangeDeclare(
+    exchange: exchangeName,
+    type: ExchangeType.Fanout);
 
-//byte[] message = Encoding.UTF8.GetBytes("Hello");
+for (int i = 0; i < 100; i++)
+{
+    await Task.Delay(200);
 
-//channel.BasicPublish(
-//        exchange: string.Empty,
-//        routingKey: queueName,
-//        body: message);
+    byte[] message = Encoding.UTF8.GetBytes("Hello " + i);
+
+    channel.BasicPublish(
+        exchange: exchangeName,
+        routingKey: string.Empty,
+        body: message
+        );
+}
 
 Console.Read();
