@@ -16,7 +16,7 @@ channel.ExchangeDeclare(
 for (int i = 0; i < 100; i++)
 {
     await Task.Delay(200);
-    byte[] message = Encoding.UTF8.GetBytes($" Hello {i}");
+    byte[] message = Encoding.UTF8.GetBytes($" Hello {i}"); 
     Console.WriteLine("Please set header value: ");
     string value = Console.ReadLine();
 
